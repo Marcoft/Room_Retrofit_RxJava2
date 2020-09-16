@@ -30,7 +30,6 @@ import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
-
     private JsonPlaceHolderApi jsonPlaceHolderApi;
 
     RecyclerView recyclerView;
@@ -96,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                 methods.InsertAllData(getApplicationContext(),db,jsonPlaceHolderApi);
                 break;
             case R.id.Insert:
-                AlertDialogInsert();
+                InsertUser();
                 break;
             case R.id.GetDate:
                 methods.GetAllData(disposable,db,mExampleList,mAdapter);
@@ -113,39 +112,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     private void UpdateUser() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Update");
-
-        final View customLayout = getLayoutInflater().inflate(R.layout.custom_dialog, null);
-        builder.setView(customLayout);
-        // add a button
-
-        builder.setCancelable(false);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                methods.update(db,customLayout,getApplicationContext());
-            }
-        });
-
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
-
-        // create and show the alert dialog
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        alertDialog("Update",1,View.VISIBLE,View.VISIBLE,View.VISIBLE,View.VISIBLE);
     }
 
     private void DeleteUser() {
+        alertDialog("Delete",3,View.VISIBLE,View.GONE,View.GONE,View.GONE);
+    }
+
+    private void InsertUser(){
+        alertDialog("Insert",2,View.GONE,View.VISIBLE,View.VISIBLE,View.VISIBLE);
+
+    }
+
+    private void alertDialog(String titleName, final int i , int viewId, int viewUserId, int viewTitle, int viewText ){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Delete");
+        builder.setTitle(titleName);
 
         final View customLayout = getLayoutInflater().inflate(R.layout.custom_dialog, null);
         builder.setView(customLayout);
@@ -154,52 +136,25 @@ public class MainActivity extends AppCompatActivity {
         final EditText userId = customLayout.findViewById(R.id.userId);
         final EditText title = customLayout.findViewById(R.id.title);
         final EditText text = customLayout.findViewById(R.id.text);
-
-        userId.setVisibility(View.GONE);
-        title.setVisibility(View.GONE);
-        text.setVisibility(View.GONE);
-
-        builder.setCancelable(false);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                methods.delete(customLayout,db,getApplicationContext());
-            }
-        });
-
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
-
-        // create and show the alert dialog
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
-
-
-    private void AlertDialogInsert(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Insert");
-
-        final View customLayout = getLayoutInflater().inflate(R.layout.custom_dialog, null);
-        builder.setView(customLayout);
-        // add a button
-
         EditText id = customLayout.findViewById(R.id.id);
-        id.setVisibility(View.GONE);
+
+        id.setVisibility(viewId);
+        userId.setVisibility(viewUserId);
+        title.setVisibility(viewTitle);
+        text.setVisibility(viewText);
+
 
         builder.setCancelable(false);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
-                methods.insert(customLayout,db, getApplicationContext());
-
+                if (i == 1){ // update
+                    methods.update(db,customLayout,getApplicationContext());
+                } else if (i == 2){ // insert
+                    methods.insert(customLayout,db, getApplicationContext());
+                } else if (i == 3){ // delete
+                    methods.delete(customLayout,db,getApplicationContext());
+                }
             }
         });
 
@@ -213,7 +168,6 @@ public class MainActivity extends AppCompatActivity {
         // create and show the alert dialog
         AlertDialog dialog = builder.create();
         dialog.show();
-
     }
 
     @Override
